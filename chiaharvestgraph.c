@@ -285,20 +285,28 @@ static void draw_column( int nr, uint32_t* img, int h )
 	const int band = ( ( qlo / 900 / 4 ) & 1 );
 	for ( int y=0; y<h; ++y )
 	{
+		const int y0 = y>0   ?  y-1 : y+0;
+		const int y1 = y<h-1 ?  y+2 : y+1;
+		const time_t r0 = qlo + 900 * (y0 ) / h;
+		const time_t r1 = qlo + 900 * (y1 ) / h;
 		const time_t s0 = qlo + 900 * (y+0) / h;
 		const time_t s1 = qlo + 900 * (y+1) / h;
+
 		int checks=0;
 		int eligib=0;
+		int proofs=0;
 		for ( int i=0; i<sz; ++i )
 		{
 			const time_t t = quarters[q].stamps[i];
+			if ( t >= r0 && t < r1 )
+				checks++;
 			if ( t >= s0 && t < s1 )
 			{
-				checks++;
 				eligib += quarters[q].eligib[i];
+				proofs += quarters[q].proofs[i];
 			}
 		}
-		const time_t span = s1-s0;
+		const time_t span = r1-r0;
 #if 0
 fprintf(stderr,"span is %zd\n", span);
 sleep(10);
@@ -316,6 +324,11 @@ exit(1);
 			red = red * 200 / 255;
 			grn = grn * 200 / 255;
 			blu = blu * 200 / 255;
+		}
+		if ( proofs )
+		{
+			// Eureka! We found a proof, and will probably get paid sweet XCH!
+			red=0; grn=0; blu=255;
 		}
 		const uint32_t c = (0xff<<24) | (blu<<16) | (grn<<8) | (red<<0);
 		img[ y*imw ] = c;
