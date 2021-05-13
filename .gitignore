@@ -1,0 +1,12 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+
+# Executable
+chiaharvestgraph
+
+# Debug files
+*.dSYM/
+
