@@ -310,6 +310,7 @@ static void draw_column( int nr, uint32_t* img, int h )
 		return;
 	const time_t qlo = quarters[q].timelo;
 	const int sz = quarters[q].sz;
+	const int band = ( ( qlo / 900 / 4 ) & 1 );
 	for ( int y=0; y<h; ++y )
 	{
 		const time_t s0 = qlo + 900 * (y+0) / h;
@@ -330,7 +331,16 @@ static void draw_column( int nr, uint32_t* img, int h )
 		float achieved = checks / expected;
 		achieved = achieved > 1.0f ? 1.0f : achieved;
 		const uint8_t idx = (uint8_t) ( achieved * 255 );
-		const uint32_t c = (0xff<<24) | (ramp[idx][2]<<16) | (ramp[idx][1]<<8) | (ramp[idx][0]<<0);
+		uint32_t red = ramp[idx][0];
+		uint32_t grn = ramp[idx][1];
+		uint32_t blu = ramp[idx][2];
+		if ( band )
+		{
+			red = red * 200 / 255;
+			grn = grn * 200 / 255;
+			blu = blu * 200 / 255;
+		}
+		const uint32_t c = (0xff<<24) | (blu<<16) | (grn<<8) | (red<<0);
 		img[ y*imw ] = c;
 	}
 }
