@@ -22,7 +22,7 @@ static int termw = 0, termh = 0;
 int imw = 0;
 int imh = 0;
 uint32_t* im = 0;
-char* legend = 0;
+char* overlay = 0;
 
 char postscript[256];
 
@@ -41,7 +41,7 @@ static void get_terminal_size(void)
 static void setup_image(void)
 {
 	if (im) free(im);
-	if (legend) free(legend);
+	if (overlay) free(overlay);
 
 	imw = termw;
 	imh = 2 * (termh-1);
@@ -49,8 +49,8 @@ static void setup_image(void)
 	im = (uint32_t*) malloc(sz);
 	memset( im, 0x00, sz );
 
-	legend = (char*) malloc( imw * (imh/2) );
-	memset( legend, 0x00, imw * (imh/2) );
+	overlay = (char*) malloc( imw * (imh/2) );
+	memset( overlay, 0x00, imw * (imh/2) );
 
 	// Draw border into image.
 	for ( int y = 0; y<imh; ++y )
@@ -89,7 +89,7 @@ static void sigwinchHandler(int sig)
 
 
 
-static void print_image_double_res( int w, int h, unsigned char* data, char* legend )
+static void print_image_double_res( int w, int h, unsigned char* data, char* overlay )
 {
 	if ( h & 1 )
 		h--;
@@ -103,7 +103,7 @@ static void print_image_double_res( int w, int h, unsigned char* data, char* leg
 		line[0] = 0;
 		for ( int x = 0; x<w; ++x )
 		{
-			char legendchar = legend ? *legend++ : 0;
+			char overlaychar = overlay ? *overlay++ : 0;
 			// foreground colour.
 			strncat( line, "\x1b[38;2;", sizeof(line) - strlen(line) - 1 );
 			char tripl[80];
@@ -111,7 +111,7 @@ static void print_image_double_res( int w, int h, unsigned char* data, char* leg
 			unsigned char g = *row0++;
 			unsigned char b = *row0++;
 			unsigned char a = *row0++;
-			if ( legendchar ) r = g = b = a = 0xff;
+			if ( overlaychar ) r = g = b = a = 0xff;
 			snprintf( tripl, sizeof(tripl), "%d;%d;%dm", r,g,b );
 			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
 			// background colour.
@@ -120,9 +120,9 @@ static void print_image_double_res( int w, int h, unsigned char* data, char* leg
 			g = *row1++;
 			b = *row1++;
 			a = *row1++;
-			if ( legendchar ) r = g = b = a = 0x00;
-			if ( legendchar )
-				snprintf( tripl, sizeof(tripl), "%d;%d;%dm%c", r,g,b,legendchar );
+			if ( overlaychar ) r = g = b = a = 0x00;
+			if ( overlaychar )
+				snprintf( tripl, sizeof(tripl), "%d;%d;%dm%c", r,g,b,overlaychar );
 			else
 				snprintf( tripl, sizeof(tripl), "%d;%d;%dm" HALFBLOCK, r,g,b );
 			strncat( line, tripl, sizeof(line) - strlen(line) - 1 );
@@ -166,7 +166,7 @@ void grapher_adapt_to_new_size(void)
 void grapher_update( void )
 {
 	printf( CURSORHOME );
-	print_image_double_res( imw, imh, (unsigned char*) im, legend );
+	print_image_double_res( imw, imh, (unsigned char*) im, overlay );
 
 //	printf( "%s", postscript );
 //	fflush( stdout );
