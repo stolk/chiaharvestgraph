@@ -10,7 +10,7 @@ The chiaharvestgraph tool will graph Chia Harvesting activity in a linux termina
 
 Examples:
 
-**$ ./chiaharvestgraph ~/.chia/mainnet/log
+**$ ./chiaharvestgraph ~/.chia/mainnet/log**
 
 
 ## Keys
