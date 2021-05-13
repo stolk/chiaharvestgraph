@@ -56,9 +56,9 @@ static void setup_image(void)
 	for ( int y = 0; y<imh; ++y )
 		for ( int x = 0; x<imw; ++x )
 		{
-			uint32_t b = 0x80 + (y/2) * 0xff / imh;
-			uint32_t g = 0xff - b;
-			uint32_t r = 0x00;
+			uint32_t b = 0x30; //  + (y/4) * 0xff / imh;
+			uint32_t g = b;
+			uint32_t r = b;
 			uint32_t a = 0xff;
 			uint32_t colour = a<<24 | b<<16 | g<<8 | r<<0;
 			im[y * imw + x] = x == 0 || x == imw - 1 || y == 0 || y == imh - 1 ? colour : 0x0;
