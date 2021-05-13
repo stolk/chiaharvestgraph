@@ -34,6 +34,18 @@ typedef struct quarterhr
 	time_t	timehi;
 } quarterhr_t;
 
+const char* logfilenames[8] =
+{
+	"debug.log.7",
+	"debug.log.6",
+	"debug.log.5",
+	"debug.log.4",
+	"debug.log.3",
+	"debug.log.2",
+	"debug.log.1",
+	"debug.log",
+};
+
 
 quarterhr_t quarters[ MAXHIST ];
 
@@ -166,12 +178,15 @@ static int add_entry( time_t t, int eligi, int proof, float durat )
 static FILE* f_log = 0;
 
 
-static FILE* open_log_file(const char* dirname)
+static FILE* open_log_file(const char* dirname, const char* logname)
 {
 	if ( f_log )
 		fclose( f_log );
+	if ( !logname )
+		logname = logfilenames[7];
+
 	char fname[PATH_MAX+1];
-	snprintf( fname, sizeof(fname), "%s/debug.log", dirname );
+	snprintf( fname, sizeof(fname), "%s/%s", dirname, logname );
 	f_log = fopen( fname, "rb" );
 	if ( !f_log )
 	{
@@ -409,11 +424,15 @@ int main(int argc, char *argv[])
 
 	init_quarters( time(0) );
 
-	if ( open_log_file( dirname ) )
+	for ( int i=0; i<8; ++i )
 	{
-		// Log file exists, we should read what is in it, currently.
-		const int numl = read_log_file();
-		fprintf( stderr, "read %d lines from log.\n", numl );
+		const char* logfilename = logfilenames[i];
+		if ( open_log_file( dirname, logfilename ) )
+		{
+			// Log file exists, we should read what is in it, currently.
+			const int numl = read_log_file();
+			fprintf( stderr, "read %d lines from log.\n", numl );
+		}
 	}
 
 	int fd;
@@ -449,7 +468,7 @@ int main(int argc, char *argv[])
 				if ( !strcmp( ie->name, "debug.log" ) )
 				{
 					fprintf( stderr, "Reopening logfile.\n" );
-					open_log_file( dirname );
+					open_log_file( dirname, 0 );
 					const int numl = read_log_file();
 					fprintf( stderr, "read %d lines from log.\n", numl );
 				}
