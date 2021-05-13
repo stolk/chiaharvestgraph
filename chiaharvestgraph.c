@@ -55,7 +55,7 @@ static int entries_added=0;	// How many log entries have we added in total?
 
 static time_t newest_stamp=0;	// The stamp of the latest entry.
 
-static time_t refresh_stamp=-1;	// When did we update the image, last?
+static time_t refresh_stamp=0;	// When did we update the image, last?
 
 static struct termios orig_termios;
 
@@ -430,6 +430,7 @@ int main(int argc, char *argv[])
 	}
 
 	enableRawMode();
+	update_image();
 
 	// Read notifications.
 	char buf[ sizeof(struct inotify_event) + PATH_MAX ];
