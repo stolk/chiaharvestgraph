@@ -297,7 +297,7 @@ static int read_log_file(void)
 }
 
 
-static void draw_column( int nr, uint32_t* img, int h )
+static void draw_column( int nr, uint32_t* img, int h, time_t now )
 {
 	const int q = MAXHIST-1-nr;
 	if ( q<0 )
@@ -338,7 +338,7 @@ static void draw_column( int nr, uint32_t* img, int h )
 		uint32_t red = ramp[idx][0];
 		uint32_t grn = ramp[idx][1];
 		uint32_t blu = ramp[idx][2];
-		if ( s0 < oldeststamp )
+		if ( s0 < oldeststamp || s1 > now )
 		{
 			red = grn = blu = 0x36;
 		}
@@ -418,9 +418,10 @@ static int update_image(void)
 
 	if (redraw)
 	{
+		time_t now = time(0);
 		for ( int col=0; col<imw-2; ++col )
 		{
-			draw_column( col, im + (3*imw) + (imw-2-col), imh-4 );
+			draw_column( col, im + (3*imw) + (imw-2-col), imh-4, now );
 		}
 		grapher_update();
 		refresh_stamp = newest_stamp;
