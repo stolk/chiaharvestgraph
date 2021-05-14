@@ -19,7 +19,7 @@ Then do:
 ## Rationale
 
 Much can go wrong when harvesting Chia.
-The full node may lose connection to peers, the farmer could not be talking to the full node, the harvester could not be talking to the farmer, etc.
+The full node may lose connection to peers, the farmer could not be talking to the full node, the harvester could not be talking to the farmer, or maybe just spotty Internet connection?
 
 That's why it is important to keep an eye on the INFO log.
 When challenged, the harvester will (on behalf of a farmer) look for proof.
@@ -63,6 +63,8 @@ Better check your wallet!
 Press ESCAPE or Q to exit diskgraph.
 
 ## Donations
+
+Chia Harvest Graph is a tool by Bram Stolk, who is on Twitter as: @BramStolk where he mostly tweets about game development.
 
 If you find this tool useful, donations can go to XCH wallet:
 xch1zfgqfqfdse3e2x2z9lscm6dx9cvd5j2jjc7pdemxjqp0xp05xzps602592
