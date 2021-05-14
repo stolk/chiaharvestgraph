@@ -49,7 +49,7 @@ Depending on the vertical resolution of the terminal, every plot pixel represent
 
 **NOTE:** You can see more days of the week by simply resizing your terminal to be wider.
 
-**NOTE:** First time user's should not be allowed by a lot of red on the left side of the screen. Chia logs are at most 7 x 20MB, and because a full node spams a lot, there are only a few hrs of info in there. On a dedicated harvester, there can be weeks of info, because it logs less. Regardless.... if you leave the tool runnining, it will hold onto the stats, up a week's worth.
+**NOTE:** First time users should not be alarmed by a lot of red on the left side of the screen. Chia logs are at most 7 x 20MB, and because a full node spams a lot, there are only a few hrs of info in there. On a dedicated harvester, there can be weeks of info, because it logs less. Regardless.... if you leave the tool runnining, it will hold onto the stats, up a week's worth.
 
 ## Colours
 
