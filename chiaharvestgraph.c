@@ -25,7 +25,7 @@
 #define MAXLOGSZ		(64*1024*1024)
 #define MAXLINESZ		1024
 
-#define WAIT_BETWEEN_SELECT_US	1000000L
+#define WAIT_BETWEEN_SELECT_US	500000L
 
 #define	MAXHIST			( 4 * 24 * 7 )	// A week's worth of quarter-hours.
 #define MAXENTR			( 12 * 15 )	// We expect 6 per minute, worst-case: 12 per min, 180 per quarter-hr.
