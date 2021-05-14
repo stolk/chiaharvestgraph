@@ -493,7 +493,7 @@ int main(int argc, char *argv[])
 
 	if (argc != 2)
 	{
-		fprintf( stderr, "Usage: %s ~/.chia/mainet/log\n", argv[0] );
+		fprintf( stderr, "Usage: %s ~/.chia/mainnet/log\n", argv[0] );
 		exit( 1 );
 	}
 	else
