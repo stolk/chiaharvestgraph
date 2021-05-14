@@ -45,6 +45,8 @@ The graph spans from the right of the terminal (NOW) to the left of the terminal
 
 Depending on the vertical resolution of the terminal, every plot pixel represents a number of seconds, 15 minutes from top to bottom.
 
+NOTE: You can see more days of the week by simply resizing your terminal to be wider.
+
 ## Colours
 
 A yellow colour means that the harvest frequency is nominal for that time span.
