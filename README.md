@@ -17,8 +17,6 @@ $ git clone git@github.com:stolk/chiaharvestgraph.git
 $ cd chiaharvestgraph
 
 $ make
-
-$./chiaharvestgraph ~/.chia/mainnet/log/
 ```
 
 ## Launching
