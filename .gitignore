@@ -10,3 +10,6 @@ chiaharvestgraph
 # Debug files
 *.dSYM/
 
+# Debugger
+.gdb_history
+
