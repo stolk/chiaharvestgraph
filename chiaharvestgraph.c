@@ -502,8 +502,11 @@ int main(int argc, char *argv[])
 	}
 	fprintf( stderr, "Monitoring directory %s\n", dirname );
 
-	int viridis = ( getenv( "CMAP_VIRIDIS" ) != 0 );
-	ramp = viridis ? cmap_viridis : cmap_heat;
+	const int viridis = ( getenv( "CMAP_VIRIDIS" ) != 0 );
+	const int magma   = ( getenv( "CMAP_MAGMA"   ) != 0 );
+
+	ramp = viridis ? cmap_viridis : 
+		magma ? cmap_magma : cmap_heat;
 
 	init_quarters( time(0) );
 
