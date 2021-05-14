@@ -484,10 +484,16 @@ int main(int argc, char *argv[])
 
 	// Read notifications.
 	char buf[ sizeof(struct inotify_event) + PATH_MAX ];
-	int len;
-	while ( (len = read(fd, buf, sizeof(buf))) > 0 )
+	int done=0;
+
+	do
 	{
-		int i = 0;
+		int len = read( fd, buf, sizeof(buf) );
+		if ( len <= 0 && errno != EINTR )
+		{
+			error( EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event" );
+		}
+		int i=0;
 		while (i < len)
 		{
 			struct inotify_event *ie = (struct inotify_event*) &buf[i];
@@ -522,19 +528,13 @@ int main(int argc, char *argv[])
 
 		update_image();
 
-		static int done=0;
-		char c;
+		char c=0;
 		const int numr = read( STDIN_FILENO, &c, 1 );
 		if ( numr == 1 && ( c == 27 || c == 'q' || c == 'Q' ) )
 			done=1;
+	} while (!done);
 
-		if ( done )
-		{
-			grapher_exit();
-			exit(0);
-		}
-	}
-
-	error(EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event");
+	grapher_exit();
+	exit(0);
 }
 
