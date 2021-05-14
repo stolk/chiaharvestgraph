@@ -66,6 +66,12 @@ static struct termios orig_termios;
 
 static const rgb_t* ramp=0;
 
+static double total_response_time_eligible=0.0;
+static double worst_response_time_eligible=0.0;
+static int total_eligible_responses=0;
+static int plotcount=-1;
+static time_t oldeststamp;
+
 
 static void init_quarters( time_t now )
 {
@@ -117,7 +123,7 @@ static int quarterslot( time_t tim )
 }
 
 
-static int add_entry( time_t t, int eligi, int proof, float durat )
+static int add_entry( time_t t, int eligi, int proof, float durat, int plots )
 {
 	while ( too_new( t ) )
 		shift_quarters();
@@ -133,6 +139,17 @@ static int add_entry( time_t t, int eligi, int proof, float durat )
 	quarters[s].proofs[i] = proof;
 	quarters[s].durati[i] = durat;
 	quarters[s].sz += 1;
+
+	if ( eligi > 0 )
+	{
+		total_response_time_eligible += durat;
+		worst_response_time_eligible = durat > worst_response_time_eligible ? durat : worst_response_time_eligible;
+		total_eligible_responses += 1;
+	}
+	if ( plotcount == -1 )
+		oldeststamp = t;
+	plotcount = plots > plotcount ? plots : plotcount;
+	oldeststamp = t < oldeststamp ? t : oldeststamp;
 	return 1;
 }
 
@@ -222,7 +239,7 @@ static void analyze_line(const char* line, ssize_t length)
 
 				if ( logtim > newest_stamp )
 				{
-					const int added = add_entry( logtim, eligi, proof, durat );
+					const int added = add_entry( logtim, eligi, proof, durat, plots );
 					if ( added )
 						newest_stamp = logtim;
 					entries_added += added;
@@ -312,11 +329,6 @@ static void draw_column( int nr, uint32_t* img, int h )
 			}
 		}
 		const time_t span = r1-r0;
-#if 0
-fprintf(stderr,"span is %zd\n", span);
-sleep(10);
-exit(1);
-#endif
 		const float nominalcheckspersecond = 9.375f;
 		const float nominalsecondspercheck = 1 / nominalcheckspersecond;
 		const float expected = span * nominalsecondspercheck;
@@ -326,6 +338,10 @@ exit(1);
 		uint32_t red = ramp[idx][0];
 		uint32_t grn = ramp[idx][1];
 		uint32_t blu = ramp[idx][2];
+		if ( s0 < oldeststamp )
+		{
+			red = grn = blu = 0x36;
+		}
 		if ( band )
 		{
 			red = red * 200 / 255;
