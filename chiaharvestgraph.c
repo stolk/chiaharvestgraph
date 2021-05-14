@@ -333,10 +333,52 @@ exit(1);
 		if ( proofs )
 		{
 			// Eureka! We found a proof, and will probably get paid sweet XCH!
-			red=0; grn=0; blu=255;
+			red=0x40; grn=0x40; blu=0xff;
 		}
 		const uint32_t c = (0xff<<24) | (blu<<16) | (grn<<8) | (red<<0);
 		img[ y*imw ] = c;
+	}
+}
+
+
+static void setup_postscript(void)
+{
+	snprintf
+	(
+		postscript,
+		sizeof(postscript),
+
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "255;255;255m",
+
+		0xf0,0x00,0x00, 0,0,0, "RED: NO-HARVEST ",
+		0xf0,0xa0,0x00, 0,0,0, "ORA: UNDER-HARVEST ",
+		0xf0,0xf0,0x00, 0,0,0, "YLW: NOMINAL ",
+		0x40,0x40,0xff, 0,0,0, "BLU: PROOF "
+	);
+}
+
+
+static void setup_overlay(void)
+{
+	strncpy( overlay + imw - 4, "NOW", 4 );
+
+	int x = imw - 8;
+	int h = 0;
+	while( x >= 0 )
+	{
+		char lab[8] = {0,0,0,0, 0,0,0,0};
+
+		if ( h<12 )
+			snprintf( overlay+x, sizeof(lab), "%2dh",  h+1);
+		else if ( h%24==0 )
+			snprintf( overlay+x, sizeof(lab), "%dDAY", h/24);
+
+		x -= 4;
+		h += 1;
 	}
 }
 
@@ -348,6 +390,7 @@ static int update_image(void)
 	if ( grapher_resized )
 	{
 		grapher_adapt_to_new_size();
+		setup_overlay();
 		redraw=1;
 	}
 
@@ -359,7 +402,7 @@ static int update_image(void)
 	{
 		for ( int col=0; col<imw-2; ++col )
 		{
-			draw_column( col, im + (1*imw) + (imw-2-col), imh-2 );
+			draw_column( col, im + (3*imw) + (imw-2-col), imh-4 );
 		}
 		grapher_update();
 		refresh_stamp = newest_stamp;
@@ -406,6 +449,8 @@ int main(int argc, char *argv[])
 	ramp = viridis ? cmap_viridis : cmap_heat;
 
 	init_quarters( time(0) );
+
+	setup_postscript();
 
 	for ( int i=0; i<8; ++i )
 	{
