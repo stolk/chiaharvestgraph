@@ -8,6 +8,21 @@ Monitor for Chia Harvesting
 
 The chiaharvestgraph tool will graph Chia Harvesting activity in a linux terminal. Use a 24-bit colour terminal, like xterm or gnome-terminal.
 
+
+## Building
+
+```
+$ git clone git@github.com:stolk/chiaharvestgraph.git
+
+$ cd chiaharvestgraph
+
+$ make
+
+$./chiaharvestgraph ~/.chia/mainnet/log/
+```
+
+## Launching
+
 To use it:
 
 Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set.
@@ -69,6 +84,7 @@ Better check your wallet!
 ## Keys
 
 Press ESCAPE or Q to exit chiaharvestgraph.
+
 
 ## Donations
 
