@@ -49,7 +49,7 @@ Depending on the vertical resolution of the terminal, every plot pixel represent
 
 **NOTE:** You can see more days of the week by simply resizing your terminal to be wider.
 
-**NOTE:** First time users should not be alarmed by a lot of red on the left side of the screen. Chia logs are at most 7 x 20MB, and because a full node spams a lot, there are only a few hrs of info in there. On a dedicated harvester, there can be weeks of info, because it logs less. Regardless.... if you leave the tool runnining, it will hold onto the stats, up a week's worth.
+**NOTE:** First time users should not be alarmed by a lot of grey colour on the left side of the screen. Chia logs are at most 7 x 20MB, and because a full node spams a lot, there are only a few hrs of info in there. On a dedicated harvester, there can be weeks of info, because it logs less. Regardless.... if you leave the tool runnining, it will hold onto the stats, up a week's worth.
 
 ## Colours
 
@@ -58,6 +58,8 @@ A yellow colour means that the harvest frequency is nominal for that time span.
 An orange colour means that it was under harvested.
 
 A red colour means that there was no harvesting at those time slots.
+
+Grey means that the log did not go far enough back for that time period.
 
 And for the incredibly lucky... a blue pixel represents a found proof! Yeehaw!
 Better check your wallet!
