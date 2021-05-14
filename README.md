@@ -1,4 +1,4 @@
-# chiaharvestgraph
+# Chia Harvest Graph
 Monitor for Chia Harvesting
 
 ![screenshot](images/screenshot0.png "screenshot")
@@ -8,10 +8,53 @@ Monitor for Chia Harvesting
 
 The chiaharvestgraph tool will graph Chia Harvesting activity in a linux terminal. Use a 24-bit colour terminal, like xterm or gnome-terminal.
 
-Examples:
+To use it:
+
+Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set.
+
+Then do:
 
 **$ ./chiaharvestgraph ~/.chia/mainnet/log**
 
+## Rationale
+
+Much can go wrong when harvesting Chia.
+The full node may lose connection to peers, the farmer could not be talking to the full node, the harvester could not be talking to the farmer, etc.
+
+That's why it is important to keep an eye on the INFO log.
+When challenged, the harvester will (on behalf of a farmer) look for proof.
+It will look for that in the plots that pass the plot-filter.
+(Every plot has a 1:512 chance of passing, by the way.)
+
+The debug log will contain lines that look like:
+``` 
+0 plots were eligible for farming 3c91c49224... Found 0 proofs. Time: 0.00383 s. Total 39 plots
+```
+
+A properly working harvester should be outputting that line every 10 seconds or so to the log file (provided the log level is INFO.)
+
+This tool will look for those lines in the logs.
+
+## Function
+
+A Chia Harvester will get challenged every 10 seconds or so, to look for proof in its plots.
+This tool will identify those lines, and register the time-stamps for those.
+If there are not enough of those time-stamps within any given period, the harvester is under-harvesting, or even not harvesting. This is colour coded on the graph.
+
+The graph spans from the right of the terminal (NOW) to the left of the terminal (PAST) and every shaded band represents one hour, and every vertical line, one quarter of an hour.
+
+Depending on the vertical resolution of the terminal, every plot pixel represents a number of seconds, 15 minutes from top to bottom.
+
+## Colours
+
+A yellow colour means that the harvest frequency is nominal for that time span.
+
+An orange colour means that it was under harvested.
+
+A red colour means that there was no harvesting at those time slots.
+
+And for the incredibly lucky... a blue pixel represents a found proof! Yeehaw!
+Better check your wallet!
 
 ## Keys
 
