@@ -29,7 +29,7 @@ It will look for that in the plots that pass the plot-filter.
 (Every plot has a 1:512 chance of passing, by the way.)
 
 The debug log will contain lines that look like:
-``` 
+```
 0 plots were eligible for farming 3c91c49224... Found 0 proofs. Time: 0.00383 s. Total 39 plots
 ```
 
@@ -62,7 +62,7 @@ Better check your wallet!
 
 ## Keys
 
-Press ESCAPE or Q to exit diskgraph.
+Press ESCAPE or Q to exit chiaharvestgraph.
 
 ## Donations
 
