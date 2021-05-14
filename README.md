@@ -47,6 +47,8 @@ The graph spans from the right of the terminal (NOW) to the left of the terminal
 
 Depending on the vertical resolution of the terminal, every plot pixel represents a number of seconds, 15 minutes from top to bottom.
 
+On the top of the screen, the average and worst-case response times to eligible harvests are shown. If your harvester takes more than 5 seconds to respond to a challenge, it is designated as too slow.
+
 **NOTE:** You can see more days of the week by simply resizing your terminal to be wider.
 
 **NOTE:** First time users should not be alarmed by a lot of grey colour on the left side of the screen. Chia logs are at most 7 x 20MB, and because a full node spams a lot, there are only a few hrs of info in there. On a dedicated harvester, there can be weeks of info, because it logs less. Regardless.... if you leave the tool runnining, it will hold onto the stats, up a week's worth.
