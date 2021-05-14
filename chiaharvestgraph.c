@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <assert.h>
+#include <math.h>
 #include <fcntl.h>
 #include <sys/inotify.h>
 #include <sys/select.h>
@@ -380,13 +381,13 @@ static void setup_postscript(void)
 }
 
 
-static void setup_overlay(void)
+static void setup_scale(void)
 {
-	strncpy( overlay + imw - 4, "NOW", 4 );
+	strncpy( overlay + 2*imw - 4, "NOW", 4 );
 
-	int x = imw - 8;
+	int x = 2*imw - 8;
 	int h = 0;
-	while( x >= 0 )
+	while( x >= imw )
 	{
 		char lab[8] = {0,0,0,0, 0,0,0,0};
 
@@ -401,6 +402,42 @@ static void setup_overlay(void)
 }
 
 
+static void place_stats_into_overlay(void)
+{
+	double avg = total_response_time_eligible / total_eligible_responses;
+	int avgms   = (int)round(avg * 1000);
+	int worstms = (int)round(worst_response_time_eligible * 1000);
+
+	const char* q_av = 0;
+	if ( avgms < 80 )
+		q_av = "fast";
+	else if ( avgms < 300 )
+		q_av = "ok";
+	else
+		q_av = "slow";
+
+	const char* q_wo = 0;
+	if ( worstms < 1000 )
+		q_wo = "fast";
+	else if ( worstms < 2000 )
+		q_wo = "ok";
+	else if ( worstms < 5000 )
+		q_wo = "slow";
+	else
+		q_wo = "too-slow";
+
+	snprintf
+	(
+		overlay+0,
+		imw,
+		"PLOTS:%d  AVG-CHECK:%dms[%s]  SLOWEST-CHECK:%dms[%s]   ",
+		plotcount,
+		avgms, q_av,
+		worstms, q_wo
+	);
+}
+
+
 static int update_image(void)
 {
 	int redraw=0;
@@ -408,7 +445,7 @@ static int update_image(void)
 	if ( grapher_resized )
 	{
 		grapher_adapt_to_new_size();
-		setup_overlay();
+		setup_scale();
 		redraw=1;
 	}
 
@@ -421,8 +458,9 @@ static int update_image(void)
 		time_t now = time(0);
 		for ( int col=0; col<imw-2; ++col )
 		{
-			draw_column( col, im + (3*imw) + (imw-2-col), imh-4, now );
+			draw_column( col, im + (5*imw) + (imw-2-col), imh-6, now );
 		}
+		place_stats_into_overlay();
 		grapher_update();
 		refresh_stamp = newest_stamp;
 	}
