@@ -317,7 +317,9 @@ fprintf(stderr,"span is %zd\n", span);
 sleep(10);
 exit(1);
 #endif
-		const float expected = span * (0.1f);
+		const float nominalcheckspersecond = 9.375f;
+		const float nominalsecondspercheck = 1 / nominalcheckspersecond;
+		const float expected = span * nominalsecondspercheck;
 		float achieved = 0.7f * checks / expected;
 		achieved = achieved > 1.0f ? 1.0f : achieved;
 		const uint8_t idx = (uint8_t) ( achieved * 255 );
