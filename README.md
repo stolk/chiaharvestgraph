@@ -16,6 +16,8 @@ Then do:
 
 **$ ./chiaharvestgraph ~/.chia/mainnet/log**
 
+Leave the tool running, as it keeps checking the log. More pixels will scroll in from the right, plotting top to bottom.
+
 ## Rationale
 
 Much can go wrong when harvesting Chia.
