@@ -56,7 +56,7 @@ static void setup_image(void)
 	memset( overlay, 0x00, imw * (imh/2) );
 
 	// Draw border into image.
-	for ( int y = 2; y<imh; ++y )
+	for ( int y = 4; y<imh; ++y )
 		for ( int x = 0; x<imw; ++x )
 		{
 			uint32_t b = 0x30; //  + (y/4) * 0xff / imh;
@@ -64,7 +64,7 @@ static void setup_image(void)
 			uint32_t r = b;
 			uint32_t a = 0xff;
 			uint32_t colour = a<<24 | b<<16 | g<<8 | r<<0;
-			im[y * imw + x] = x == 0 || x == imw - 1 || y == 2 || y == imh - 1 ? colour : 0x0;
+			im[y * imw + x] = x == 0 || x == imw - 1 || y == 4 || y == imh - 1 ? colour : 0x0;
 		}
 }
 
