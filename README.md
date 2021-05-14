@@ -81,7 +81,7 @@ xch1zfgqfqfdse3e2x2z9lscm6dx9cvd5j2jjc7pdemxjqp0xp05xzps602592
 
 * Shows garbage on terminals that do not support 24 bit colour.
 * Missing manual page.
-* It looks (https://imgur.com/a/GkzPie2)[weird] when going through putty.
+* It looks [weird](https://imgur.com/a/GkzPie2) when going through putty.
 
 ## Copyright
 
