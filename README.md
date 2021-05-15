@@ -12,7 +12,7 @@ The chiaharvestgraph tool will graph Chia Harvesting activity in a linux termina
 ## Building
 
 ```
-$ git clone git@github.com:stolk/chiaharvestgraph.git
+$ git clone https://github.com/stolk/chiaharvestgraph.git
 
 $ cd chiaharvestgraph
 
