@@ -23,7 +23,6 @@
 #include "colourmaps.h"
 
 
-#define MAXLOGSZ		(64*1024*1024)
 #define MAXLINESZ		1024
 
 #define WAIT_BETWEEN_SELECT_US	500000L
