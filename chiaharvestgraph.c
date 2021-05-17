@@ -119,7 +119,20 @@ static int quarterslot( time_t tim )
 	const time_t d = tim - quarters[last].timehi;
 	if ( d >= 0 )
 		return INT_MAX;
-	return MAXHIST - 1 + ( d / 900 );
+	const int slot = (int) ( MAXHIST - 1 + ( d / 900 ) );
+	if ( slot < 0 )
+	{
+		fprintf
+		(
+			stderr,
+			"ERROR - UNEXPECTED TIME VALUE.\n"
+			"tim=%zd lasttimehi=%zd d=%zd slot=%d\n"
+			"REPORT THIS MESSAGE TO %s\n",
+			tim, quarters[last].timehi, d, slot,
+			"https://github.com/stolk/chiaharvestgraph/issues/12"
+		);
+	}
+	return slot;
 }
 
 
@@ -128,10 +141,10 @@ static int add_entry( time_t t, int eligi, int proof, float durat, int plots )
 	while ( too_new( t ) )
 		shift_quarters();
 	if ( too_old( t ) )
-		return 0;
+		return 0;	// signal not adding.
 	int s = quarterslot( t );
-	assert( s>=0 );
-	assert( s<MAXHIST );
+	if ( s < 0 || s >= MAXHIST )
+		return -1;	// signal failure.
 	const int i = quarters[s].sz;
 	assert( i < MAXENTR );
 	quarters[s].stamps[i] = t;
@@ -240,9 +253,15 @@ static void analyze_line(const char* line, ssize_t length)
 				if ( logtim > newest_stamp )
 				{
 					const int added = add_entry( logtim, eligi, proof, durat, plots );
-					if ( added )
+					if ( added < 0)
+					{
+						fprintf( stderr, "OFFENDING LOG LINE: %s\n", line );
+					}
+					if ( added > 0)
+					{
 						newest_stamp = logtim;
-					entries_added += added;
+						entries_added += added;
+					}
 				}
 				else
 				{
