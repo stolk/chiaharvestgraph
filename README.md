@@ -83,6 +83,10 @@ Better check your wallet!
 
 Press ESCAPE or Q to exit chiaharvestgraph.
 
+## Did you know that...
+
+* Chia Harvest Graph has a companion tool called [Chia Plot Graph](https://github.com/stolk/chiaplotgraph).
+
 
 ## Donations
 
