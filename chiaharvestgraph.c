@@ -256,6 +256,7 @@ static void analyze_line(const char* line, ssize_t length)
 					if ( added < 0)
 					{
 						fprintf( stderr, "OFFENDING LOG LINE: %s\n", line );
+						exit(3); // Stop right there, so the user can see the message.
 					}
 					if ( added > 0)
 					{
