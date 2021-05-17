@@ -102,7 +102,7 @@ static void shift_quarters( void )
 
 static int too_old( time_t t )
 {
-	return t < quarters[ 0 ].timelo;
+	return t <= quarters[ 0 ].timelo;
 }
 
 
