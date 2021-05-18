@@ -83,6 +83,21 @@ Better check your wallet!
 
 Press ESCAPE or Q to exit chiaharvestgraph.
 
+## Environment Variables
+
+If you have trouble seeing the standard colourmap, you can select a different one:
+
+```
+$ CMAP_VIRIDIS=1 ./chiaharvestgraph ~/.chia/mainnet/logs
+$ CMAP_HEAT=1 ./chiaharvestgraph ~/.chia/mainnet/logs
+```
+
+If you have more than 8 recycled debug.log files, then you can tell the tool to read more of them:
+```
+$ NUM_DEBUG_LOGS=15 ./chiaharvestgraph ~/.chia/mainnet/logs
+```
+
+
 ## Did you know that...
 
 * Chia Harvest Graph has a companion tool called [Chia Plot Graph](https://github.com/stolk/chiaplotgraph).

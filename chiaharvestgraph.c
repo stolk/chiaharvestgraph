@@ -41,18 +41,6 @@ typedef struct quarterhr
 	time_t	timehi;
 } quarterhr_t;
 
-const char* logfilenames[8] =
-{
-	"debug.log.7",
-	"debug.log.6",
-	"debug.log.5",
-	"debug.log.4",
-	"debug.log.3",
-	"debug.log.2",
-	"debug.log.1",
-	"debug.log",
-};
-
 
 quarterhr_t quarters[ MAXHIST ];
 
@@ -175,7 +163,7 @@ static FILE* open_log_file(const char* dirname, const char* logname)
 	if ( f_log )
 		fclose( f_log );
 	if ( !logname )
-		logname = logfilenames[7];
+		logname = "debug.log";
 
 	char fname[PATH_MAX+1];
 	snprintf( fname, sizeof(fname), "%s/%s", dirname, logname );
@@ -381,6 +369,26 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 
 static void setup_postscript(void)
 {
+	uint8_t c0[3] = {0xf0,0x00,0x00};
+	uint8_t c1[3] = {0xf0,0xa0,0x00};
+	uint8_t c2[3] = {0xf0,0xf0,0x00};
+	uint8_t c3[3] = {0x40,0x40,0xff};
+	const char* l0 = "RED: NO-HARVEST ";
+	const char* l1 = "ORA: UNDER-HARVEST ";
+	const char* l2 = "YLW: NOMINAL ";
+	const char* l3 = "BLU: PROOF ";
+
+	if ( ramp != cmap_heat )
+	{
+		c0[0] = ramp[  2][0]; c0[1] = ramp[  2][1]; c0[2] = ramp[  2][2];
+		c1[0] = ramp[120][0]; c1[1] = ramp[120][1]; c1[2] = ramp[120][2];
+		c2[0] = ramp[210][0]; c2[1] = ramp[210][1]; c2[2] = ramp[210][2];
+		l0 = "NO-HARVEST  ";
+		l1 = "UNDER-HARVEST  ";
+		l2 = "NOMINAL  ";
+		l3 = "PROOF  ";
+	}
+
 	snprintf
 	(
 		postscript,
@@ -392,10 +400,10 @@ static void setup_postscript(void)
 		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
 		SETFG "255;255;255m",
 
-		0xf0,0x00,0x00, 0,0,0, "RED: NO-HARVEST ",
-		0xf0,0xa0,0x00, 0,0,0, "ORA: UNDER-HARVEST ",
-		0xf0,0xf0,0x00, 0,0,0, "YLW: NOMINAL ",
-		0x40,0x40,0xff, 0,0,0, "BLU: PROOF "
+		c0[0],c0[1],c0[2], 0,0,0, l0,
+		c1[0],c1[1],c1[2], 0,0,0, l1,
+		c2[0],c2[1],c2[2], 0,0,0, l2,
+		c3[0],c3[1],c3[2], 0,0,0, l3
 	);
 }
 
@@ -531,14 +539,25 @@ int main(int argc, char *argv[])
 
 	setup_postscript();
 
-	for ( int i=0; i<8; ++i )
+	int numdebuglogs=8;
+	const char* str = getenv("NUM_DEBUG_LOGS");
+	if ( str )
 	{
-		const char* logfilename = logfilenames[i];
+		numdebuglogs=atoi(str);
+		assert(numdebuglogs>0);
+	}
+	for ( int i=numdebuglogs-1; i>=0; --i )
+	{
+		char logfilename[80];
+		if ( i )
+			snprintf( logfilename, sizeof(logfilename), "debug.log.%d", i );
+		else
+			snprintf( logfilename, sizeof(logfilename), "debug.log" );
 		if ( open_log_file( dirname, logfilename ) )
 		{
 			// Log file exists, we should read what is in it, currently.
 			const int numl = read_log_file();
-			fprintf( stderr, "read %d lines from log.\n", numl );
+			fprintf( stderr, "read %d lines from log %s\n", numl, logfilename );
 		}
 	}
 
