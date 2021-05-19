@@ -389,6 +389,7 @@ static void setup_postscript(void)
 		l3 = "PROOF  ";
 		if ( ramp == cmap_viridis ) c3[0] = c3[1] = c3[2] = 0xff;
 		if ( ramp == cmap_magma   ) { c3[0] = 0x00; c3[1] = 0xff; c3[2] = 0x00; }
+		if ( ramp == cmap_plasma  ) { c3[0] = 0x00; c3[1] = 0xb0; c3[2] = 0xff; }
 	}
 
 	snprintf
@@ -533,9 +534,12 @@ int main(int argc, char *argv[])
 
 	const int viridis = ( getenv( "CMAP_VIRIDIS" ) != 0 );
 	const int magma   = ( getenv( "CMAP_MAGMA"   ) != 0 );
+	const int plasma  = ( getenv( "CMAP_PLASMA"  ) != 0 );
 
-	ramp = viridis ? cmap_viridis : 
-		magma ? cmap_magma : cmap_heat;
+	ramp = cmap_heat;
+	if ( viridis ) ramp = cmap_viridis;
+	if ( magma   ) ramp = cmap_magma;
+	if ( plasma  ) ramp = cmap_plasma;
 
 	init_quarters( time(0) );
 

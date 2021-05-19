@@ -90,6 +90,7 @@ If you have trouble seeing the standard colourmap, you can select a different on
 ```
 $ CMAP_VIRIDIS=1 ./chiaharvestgraph ~/.chia/mainnet/logs
 $ CMAP_MAGMA=1 ./chiaharvestgraph ~/.chia/mainnet/logs
+$ CMAP_PLASMA=1 ./chiaharvestgraph ~/.chia/mainnet/logs
 ```
 
 If you have more than 8 recycled debug.log files, then you can tell the tool to read more of them:
