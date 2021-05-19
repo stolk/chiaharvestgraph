@@ -340,7 +340,7 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		const float nominalcheckspersecond = 9.375f;
 		const float nominalsecondspercheck = 1 / nominalcheckspersecond;
 		const float expected = span * nominalsecondspercheck;
-		float achieved = 0.7f * checks / expected;
+		float achieved = 0.73f * checks / expected;
 		achieved = achieved > 1.0f ? 1.0f : achieved;
 		const uint8_t idx = (uint8_t) ( achieved * 255 );
 		uint32_t red = ramp[idx][0];
@@ -382,11 +382,13 @@ static void setup_postscript(void)
 	{
 		c0[0] = ramp[  2][0]; c0[1] = ramp[  2][1]; c0[2] = ramp[  2][2];
 		c1[0] = ramp[120][0]; c1[1] = ramp[120][1]; c1[2] = ramp[120][2];
-		c2[0] = ramp[210][0]; c2[1] = ramp[210][1]; c2[2] = ramp[210][2];
+		c2[0] = ramp[230][0]; c2[1] = ramp[230][1]; c2[2] = ramp[230][2];
 		l0 = "NO-HARVEST  ";
 		l1 = "UNDER-HARVEST  ";
 		l2 = "NOMINAL  ";
 		l3 = "PROOF  ";
+		if ( ramp == cmap_viridis ) c3[0] = c3[1] = c3[2] = 0xff;
+		if ( ramp == cmap_magma   ) { c3[0] = 0x00; c3[1] = 0xff; c3[2] = 0x00; }
 	}
 
 	snprintf
