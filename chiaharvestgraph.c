@@ -9,9 +9,11 @@
 #include <assert.h>
 #include <math.h>
 #include <fcntl.h>
+#include <dirent.h>
 #include <sys/inotify.h>
 #include <sys/select.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <time.h>
 #include <limits.h>
 #include <errno.h>
@@ -530,6 +532,23 @@ int main(int argc, char *argv[])
 	{
 		dirname = argv[ 1 ];
 	}
+
+	DIR* dir = opendir(dirname);
+	if ( !dir )
+	{
+		if ( errno == ENOTDIR )
+		{
+			fprintf(stderr, "%s is not a directory.\n", dirname );
+			exit(2);
+		}
+		error( EXIT_FAILURE, errno, "failed to open directory." );
+	}
+	else
+	{
+		closedir(dir);
+		dir=0;
+	}
+
 	fprintf( stderr, "Monitoring directory %s\n", dirname );
 
 	const int viridis = ( getenv( "CMAP_VIRIDIS" ) != 0 );
