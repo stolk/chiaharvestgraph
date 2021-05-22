@@ -151,7 +151,7 @@ static int add_entry( time_t t, int eligi, int proof, float durat, int plots )
 	}
 	if ( plotcount == -1 )
 		oldeststamp = t;
-	plotcount = plots > plotcount ? plots : plotcount;
+	plotcount = plots;
 	oldeststamp = t < oldeststamp ? t : oldeststamp;
 	return 1;
 }
