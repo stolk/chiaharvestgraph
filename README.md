@@ -31,6 +31,8 @@ Then do:
 
 Leave the tool running, as it keeps checking the log. More pixels will scroll in from the right, plotting top to bottom.
 
+**PRO TIP**: Don't scale your terminal higher than 25 lines, because the image will get noisy due to small time-bins. Terminal of 15 lines or so is best, in my experience.
+
 ## Rationale
 
 Much can go wrong when harvesting Chia.
