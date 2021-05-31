@@ -76,7 +76,9 @@ An orange colour means that it was under harvested.
 
 A red colour means that there was no harvesting at those time slots.
 
-Grey means that the log did not go far enough back for that time period.
+A white colour means that there was a bit more than expected harvesting, due to fluctuations.
+
+Dark Grey means that the log did not go far enough back for that time period.
 
 And for the incredibly lucky... a blue pixel represents a found proof! Yeehaw!
 Better check your wallet!
