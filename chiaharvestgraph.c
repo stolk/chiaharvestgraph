@@ -485,6 +485,9 @@ static int update_image(void)
 	if ( newest_stamp > refresh_stamp )
 		redraw=1;
 
+	if ( time(0) > refresh_stamp )
+		redraw=1;
+
 	if (redraw)
 	{
 		time_t now = time(0);
@@ -590,6 +593,9 @@ int main(int argc, char *argv[])
 	if ( (fd = inotify_init()) < 0 )
 		error( EXIT_FAILURE, errno, "failed to initialize inotify instance" );
 
+	int flags = fcntl( fd, F_GETFL, 0 );
+	fcntl( fd, F_SETFL, flags | O_NONBLOCK );
+
 	int wd;
 	if ( (wd = inotify_add_watch ( fd, dirname, IN_MODIFY | IN_CREATE | IN_DELETE ) ) < 0 )
 		error( EXIT_FAILURE, errno, "failed to add inotify watch for '%s'", dirname );
@@ -611,10 +617,17 @@ int main(int argc, char *argv[])
 
 	do
 	{
-		int len = read( fd, buf, sizeof(buf) );
-		if ( len <= 0 && errno != EINTR )
+		const int len = read( fd, buf, sizeof(buf) );
+		if ( len <= 0 )
 		{
-			error( EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event" );
+			if ( errno == EWOULDBLOCK )
+			{
+				const int numl = read_log_file();
+				if ( !numl )
+					sleep(6);
+			}
+			else if ( errno != EINTR )
+				error( EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event" );
 		}
 		int i=0;
 		while (i < len)
@@ -633,17 +646,11 @@ int main(int argc, char *argv[])
 			}
 			else if ( ie->mask & IN_MODIFY )
 			{
-				if ( !strcmp( ie->name, "debug.log" ) )
-				{
-					//fprintf( stderr, "Modified.\n" );
-					const int numl = read_log_file();
-					(void) numl;
-					//fprintf( stderr, "read %d lines from log.\n", numl );
-				}
+				// We used to only read on modify, but that would pause the graph.
 			}
 			else if (ie->mask & IN_DELETE)
 			{
-				printf("%s was deleted\n",  ie->name);
+				// printf("%s was deleted\n",  ie->name);
 			}
 
 			i += sizeof(struct inotify_event) + ie->len;
