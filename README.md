@@ -120,6 +120,7 @@ xch1zfgqfqfdse3e2x2z9lscm6dx9cvd5j2jjc7pdemxjqp0xp05xzps602592
 * Shows garbage on terminals that do not support 24 bit colour.
 * Missing manual page.
 * It looks [weird](https://imgur.com/a/GkzPie2) when going through putty.
+* If you are having display issues on Raspberry Pi OS, try tmux.
 
 ## Copyright
 
