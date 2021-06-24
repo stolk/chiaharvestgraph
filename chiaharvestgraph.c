@@ -1,5 +1,5 @@
 // chiaharvestgraph.c
-// 
+//
 // (c)2021 by Abraham Stolk.
 // XCH Donations: xch1zfgqfqfdse3e2x2z9lscm6dx9cvd5j2jjc7pdemxjqp0xp05xzps602592
 
@@ -196,11 +196,12 @@ static void analyze_line(const char* line, ssize_t length)
 		if ( !strncmp( line+24, "harvester ", 10 ) )
 		{
 			int year=-1;
-			int month=-1;	
+			int month=-1;
 			int day=-1;
 			int hours=-1;
 			int minut=-1;
 			float secon=-1;
+			char crypto[128];
 			int eligi = -1;
 			int proof = -1;
 			float durat = -1.0f;
@@ -209,7 +210,7 @@ static void analyze_line(const char* line, ssize_t length)
 			const int num = sscanf
 			(
 				line,
-				"%04d-%02d-%02dT%02d:%02d:%f harvester chia.harvester.harvester: INFO "
+				"%04d-%02d-%02dT%02d:%02d:%f harvester %[^.].harvester.harvester: INFO "
 				"%d plots were eligible for farming %s Found %d proofs. Time: %f s. Total %d plots",
 				&year,
 				&month,
@@ -217,13 +218,14 @@ static void analyze_line(const char* line, ssize_t length)
 				&hours,
 				&minut,
 				&secon,
+				crypto,
 				&eligi,
 				key,
 				&proof,
 				&durat,
 				&plots
 			);
-			if ( num == 11 )
+			if ( num == 12 )
 			{
 				struct tm tim =
 				{
