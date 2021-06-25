@@ -193,7 +193,7 @@ static void analyze_line(const char* line, ssize_t length)
 {
 	if ( length > 60 )
 	{
-		if ( !strncmp( line+24, "harvester ", 10 ) )
+		if ( !strncmp( line+24, "harvester ", 10 ) && strstr( line, "eligible" ) )
 		{
 			int year=-1;
 			int month=-1;
