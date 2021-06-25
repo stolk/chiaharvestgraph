@@ -189,11 +189,11 @@ static FILE* open_log_file(const char* dirname, const char* logname)
 // Parses log entries that look like this:
 // 2021-05-13T09:14:35.538 harvester chia.harvester.harvester: INFO     0 plots were eligible for farming c1c8456f7a... Found 0 proofs. Time: 0.00201 s. Total 36 plots
 
-static void analyze_line(const char* line, ssize_t length)
+static void analyze_line(char **line, ssize_t length)
 {
 	if ( length > 60 )
 	{
-		if ( !strncmp( line+24, "harvester ", 10 ) )
+		if ( !strncmp( *line+24, "harvester ", 10 ) )
 		{
 			int year=-1;
 			int month=-1;
@@ -209,7 +209,7 @@ static void analyze_line(const char* line, ssize_t length)
 			char key[128];
 			const int num = sscanf
 			(
-				line,
+				*line,
 				"%04d-%02d-%02dT%02d:%02d:%f harvester %[^.].harvester.harvester: INFO "
 				"%d plots were eligible for farming %s Found %d proofs. Time: %f s. Total %d plots",
 				&year,
@@ -247,7 +247,7 @@ static void analyze_line(const char* line, ssize_t length)
 					const int added = add_entry( logtim, eligi, proof, durat, plots );
 					if ( added < 0)
 					{
-						fprintf( stderr, "OFFENDING LOG LINE: %s\n", line );
+						fprintf( stderr, "OFFENDING LOG LINE: %s\n", *line );
 						exit(3); // Stop right there, so the user can see the message.
 					}
 					if ( added > 0)
@@ -259,7 +259,7 @@ static void analyze_line(const char* line, ssize_t length)
 				else
 				{
 					// Sometimes a whole bunch of harvester runs are done in the very same second. Why?
-					//fprintf(stderr, "Spurious entry: %s", line);
+					//fprintf(stderr, "Spurious entry: %s", *line);
 				}
 			}
 		}
@@ -302,11 +302,9 @@ static int read_log_file(void)
 			clearerr( f_log );
 			return linesread;
 		}
-		else if ( ll <= 200)
-		{
-			analyze_line( line, ll );
-		}
+
 		linesread++;
+		analyze_line( &line, ll );
 	} while(1);
 }
 
