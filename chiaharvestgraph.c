@@ -302,9 +302,11 @@ static int read_log_file(void)
 			clearerr( f_log );
 			return linesread;
 		}
-
+		else if ( ll <= 200)
+		{
+			analyze_line( line, ll );
+		}
 		linesread++;
-		analyze_line( line, ll );
 	} while(1);
 }
 
