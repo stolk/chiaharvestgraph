@@ -37,6 +37,7 @@ typedef struct quarterhr
 	time_t	stamps[ MAXENTR ];
 	int	eligib[ MAXENTR ];
 	int	proofs[ MAXENTR ];
+	int	poolpr[ MAXENTR ];
 	float	durati[ MAXENTR ];
 	int	sz;
 	time_t	timelo;
@@ -140,6 +141,7 @@ static int add_entry( time_t t, int eligi, int proof, float durat, int plots )
 	quarters[s].stamps[i] = t;
 	quarters[s].eligib[i] = eligi;
 	quarters[s].proofs[i] = proof;
+	quarters[s].poolpr[i] = 0;
 	quarters[s].durati[i] = durat;
 	quarters[s].sz += 1;
 
@@ -154,6 +156,19 @@ static int add_entry( time_t t, int eligi, int proof, float durat, int plots )
 	plotcount = plots;
 	oldeststamp = t < oldeststamp ? t : oldeststamp;
 	return 1;
+}
+
+
+static int mark_proof_as_a_pool_proof( time_t tim )
+{
+	int s = quarterslot( tim );
+	if ( s < 0 || s >= MAXHIST )
+		return -1;
+	const int i = quarters[s].sz - 1;
+	if ( i < 0 )
+		return -1;
+	quarters[s].poolpr[i] += 1;
+	return 0;
 }
 
 
@@ -188,12 +203,15 @@ static FILE* open_log_file(const char* dirname, const char* logname)
 
 // Parses log entries that look like this:
 // 2021-05-13T09:14:35.538 harvester chia.harvester.harvester: INFO     0 plots were eligible for farming c1c8456f7a... Found 0 proofs. Time: 0.00201 s. Total 36 plots
+// NOTE: If followed by a line that looks like: "Submitting partial for" then it was a pooled proof.
 
 static void analyze_line(const char* line, ssize_t length)
 {
 	if ( length > 60 )
 	{
-		if ( !strncmp( line+24, "harvester ", 10 ) && strstr( line, "eligible" ) )
+		const int from_harvester = !strncmp( line+24, "harvester ", 10 );
+		const int from_farmer    = !strncmp( line+24, "farmer ", 7 );
+		if ( from_harvester && strstr( line, "eligible" ) )
 		{
 			int year=-1;
 			int month=-1;
@@ -263,6 +281,46 @@ static void analyze_line(const char* line, ssize_t length)
 				}
 			}
 		}
+		if ( from_farmer && strstr(line, "Submitting partial for") )
+		{
+			// Last proof we found was a pooled proof.
+			// We should record this fact.
+			int year=-1;
+			int month=-1;
+			int day=-1;
+			int hours=-1;
+			int minut=-1;
+			float secon=-1;
+			const int num = sscanf
+			(
+				line,
+				"%04d-%02d-%02dT%02d:%02d:%f farmer ",
+				&year,
+				&month,
+				&day,
+				&hours,
+				&minut,
+				&secon
+			);
+			if ( num == 6 )
+			{
+				struct tm tim =
+				{
+					(int)secon,	// seconds 0..60
+					minut,		// minutes 0..59
+					hours,		// hours 0..23
+					day,		// day 1..31
+					month-1,	// month 0..11
+					year-1900,	// year - 1900
+					-1,
+					-1,
+					-1
+				};
+				const time_t logtim = mktime( &tim );
+				assert( logtim != (time_t) -1 );
+				mark_proof_as_a_pool_proof( logtim );
+			}
+		}
 	}
 }
 
@@ -329,6 +387,7 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		int checks=0;
 		int eligib=0;
 		int proofs=0;
+		int poolpr=0;
 		for ( int i=0; i<sz; ++i )
 		{
 			const time_t t = quarters[q].stamps[i];
@@ -338,6 +397,7 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 			{
 				eligib += quarters[q].eligib[i];
 				proofs += quarters[q].proofs[i];
+				poolpr += quarters[q].poolpr[i];
 			}
 		}
 		const time_t span = r1-r0;
@@ -363,7 +423,14 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		if ( proofs )
 		{
 			// Eureka! We found a proof, and will probably get paid sweet XCH!
-			red=0x40; grn=0x40; blu=0xff;
+			if ( proofs > poolpr )
+			{
+				red=0x40; grn=0x40; blu=0xff;
+			}
+			else
+			{
+				red=0x20; grn=0xe0, blu=0xe0;
+			}
 		}
 		const uint32_t c = (0xff<<24) | (blu<<16) | (grn<<8) | (red<<0);
 		img[ y*imw ] = c;
@@ -377,10 +444,12 @@ static void setup_postscript(void)
 	uint8_t c1[3] = {0xf0,0xa0,0x00};
 	uint8_t c2[3] = {0xf0,0xf0,0x00};
 	uint8_t c3[3] = {0x40,0x40,0xff};
+	uint8_t c4[3] = {0x20,0xe0,0xe0};
 	const char* l0 = "RED: NO-HARVEST ";
 	const char* l1 = "ORA: UNDER-HARVEST ";
 	const char* l2 = "YLW: NOMINAL ";
 	const char* l3 = "BLU: PROOF ";
+	const char* l4 = "CYA: POOLPR ";
 
 	if ( ramp != cmap_heat )
 	{
@@ -391,6 +460,7 @@ static void setup_postscript(void)
 		l1 = "UNDER-HARVEST  ";
 		l2 = "NOMINAL  ";
 		l3 = "PROOF  ";
+		l4 = "POOLPR  ";
 		if ( ramp == cmap_viridis ) c3[0] = c3[1] = c3[2] = 0xff;
 		if ( ramp == cmap_magma   ) { c3[0] = 0x00; c3[1] = 0xff; c3[2] = 0x00; }
 		if ( ramp == cmap_plasma  ) { c3[0] = 0x00; c3[1] = 0xb0; c3[2] = 0xff; }
@@ -405,12 +475,14 @@ static void setup_postscript(void)
 		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
 		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
 		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
 		SETFG "255;255;255m",
 
 		c0[0],c0[1],c0[2], 0,0,0, l0,
 		c1[0],c1[1],c1[2], 0,0,0, l1,
 		c2[0],c2[1],c2[2], 0,0,0, l2,
-		c3[0],c3[1],c3[2], 0,0,0, l3
+		c3[0],c3[1],c3[2], 0,0,0, l3,
+		c4[0],c4[1],c4[2], 0,0,0, l4
 	);
 }
 
