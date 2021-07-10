@@ -63,6 +63,8 @@ static int total_eligible_responses=0;
 static int plotcount=-1;
 static time_t oldeststamp;
 
+static int has_access_to_farmer_log=0;
+
 
 static void init_quarters( time_t now )
 {
@@ -201,6 +203,56 @@ static FILE* open_log_file(const char* dirname, const char* logname)
 	return f_log;
 }
 
+
+static void setup_postscript(void)
+{
+	uint8_t c0[3] = {0xf0,0x00,0x00};
+	uint8_t c1[3] = {0xf0,0xa0,0x00};
+	uint8_t c2[3] = {0xf0,0xf0,0x00};
+	uint8_t c3[3] = {0x40,0x40,0xff};
+	uint8_t c4[3] = {0x20,0xe0,0xe0};
+	const char* l0 = "RED: NO-HARVEST ";
+	const char* l1 = "ORA: UNDER-HARVEST ";
+	const char* l2 = "YLW: NOMINAL ";
+	const char* l3 = has_access_to_farmer_log ? "BLU: PROOF " : "BLU: (POOL)PROOF ";
+	const char* l4 = has_access_to_farmer_log ? "CYA: POOLPR " : "";
+
+	if ( ramp != cmap_heat )
+	{
+		c0[0] = ramp[  2][0]; c0[1] = ramp[  2][1]; c0[2] = ramp[  2][2];
+		c1[0] = ramp[120][0]; c1[1] = ramp[120][1]; c1[2] = ramp[120][2];
+		c2[0] = ramp[230][0]; c2[1] = ramp[230][1]; c2[2] = ramp[230][2];
+		l0 = "NO-HARVEST  ";
+		l1 = "UNDER-HARVEST  ";
+		l2 = "NOMINAL  ";
+		l3 = "PROOF  ";
+		l4 = has_access_to_farmer_log ? "POOLPR  " : "";
+		if ( ramp == cmap_viridis ) c3[0] = c3[1] = c3[2] = 0xff;
+		if ( ramp == cmap_magma   ) { c3[0] = 0x00; c3[1] = 0xff; c3[2] = 0x00; }
+		if ( ramp == cmap_plasma  ) { c3[0] = 0x00; c3[1] = 0xb0; c3[2] = 0xff; }
+	}
+
+	snprintf
+	(
+		postscript,
+		sizeof(postscript),
+
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
+		SETFG "255;255;255m",
+
+		c0[0],c0[1],c0[2], 0,0,0, l0,
+		c1[0],c1[1],c1[2], 0,0,0, l1,
+		c2[0],c2[1],c2[2], 0,0,0, l2,
+		c3[0],c3[1],c3[2], 0,0,0, l3,
+		c4[0],c4[1],c4[2], 0,0,0, l4
+	);
+}
+
+
 // Parses log entries that look like this:
 // 2021-05-13T09:14:35.538 harvester chia.harvester.harvester: INFO     0 plots were eligible for farming c1c8456f7a... Found 0 proofs. Time: 0.00201 s. Total 36 plots
 // NOTE: If followed by a line that looks like: "Submitting partial for" then it was a pooled proof.
@@ -211,6 +263,11 @@ static void analyze_line(const char* line, ssize_t length)
 	{
 		const int from_harvester = !strncmp( line+24, "harvester ", 10 );
 		const int from_farmer    = !strncmp( line+24, "farmer ", 7 );
+		if ( from_farmer && !has_access_to_farmer_log )
+		{
+			has_access_to_farmer_log = 1;
+			setup_postscript();
+		}
 		if ( from_harvester && strstr( line, "eligible" ) )
 		{
 			int year=-1;
@@ -435,55 +492,6 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		const uint32_t c = (0xff<<24) | (blu<<16) | (grn<<8) | (red<<0);
 		img[ y*imw ] = c;
 	}
-}
-
-
-static void setup_postscript(void)
-{
-	uint8_t c0[3] = {0xf0,0x00,0x00};
-	uint8_t c1[3] = {0xf0,0xa0,0x00};
-	uint8_t c2[3] = {0xf0,0xf0,0x00};
-	uint8_t c3[3] = {0x40,0x40,0xff};
-	uint8_t c4[3] = {0x20,0xe0,0xe0};
-	const char* l0 = "RED: NO-HARVEST ";
-	const char* l1 = "ORA: UNDER-HARVEST ";
-	const char* l2 = "YLW: NOMINAL ";
-	const char* l3 = "BLU: PROOF ";
-	const char* l4 = "CYA: POOLPR ";
-
-	if ( ramp != cmap_heat )
-	{
-		c0[0] = ramp[  2][0]; c0[1] = ramp[  2][1]; c0[2] = ramp[  2][2];
-		c1[0] = ramp[120][0]; c1[1] = ramp[120][1]; c1[2] = ramp[120][2];
-		c2[0] = ramp[230][0]; c2[1] = ramp[230][1]; c2[2] = ramp[230][2];
-		l0 = "NO-HARVEST  ";
-		l1 = "UNDER-HARVEST  ";
-		l2 = "NOMINAL  ";
-		l3 = "PROOF  ";
-		l4 = "POOLPR  ";
-		if ( ramp == cmap_viridis ) c3[0] = c3[1] = c3[2] = 0xff;
-		if ( ramp == cmap_magma   ) { c3[0] = 0x00; c3[1] = 0xff; c3[2] = 0x00; }
-		if ( ramp == cmap_plasma  ) { c3[0] = 0x00; c3[1] = 0xb0; c3[2] = 0xff; }
-	}
-
-	snprintf
-	(
-		postscript,
-		sizeof(postscript),
-
-		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
-		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
-		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
-		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
-		SETFG "%d;%d;%dm" SETBG "%d;%d;%dm%s"
-		SETFG "255;255;255m",
-
-		c0[0],c0[1],c0[2], 0,0,0, l0,
-		c1[0],c1[1],c1[2], 0,0,0, l1,
-		c2[0],c2[1],c2[2], 0,0,0, l2,
-		c3[0],c3[1],c3[2], 0,0,0, l3,
-		c4[0],c4[1],c4[2], 0,0,0, l4
-	);
 }
 
 
