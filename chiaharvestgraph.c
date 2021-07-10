@@ -480,7 +480,7 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		if ( proofs )
 		{
 			// Eureka! We found a proof, and will probably get paid sweet XCH!
-			if ( proofs > poolpr )
+			if ( /* proofs > poolpr*/ !poolpr )
 			{
 				red=0x40; grn=0x40; blu=0xff;
 			}
