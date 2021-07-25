@@ -17,7 +17,7 @@
 #include <time.h>
 #include <limits.h>
 #include <errno.h>
-#include <error.h>
+#include <err.h>
 #include <string.h>
 #include <termios.h>
 
@@ -118,7 +118,7 @@ static int quarterslot( time_t tim )
 		fprintf
 		(
 			stderr,
-			"ERROR - UNEXPECTED TIME VALUE.\n"
+			"err - UNEXPECTED TIME VALUE.\n"
 			"tim=%zd lasttimehi=%zd d=%zd slot=%d\n"
 			"REPORT THIS MESSAGE TO %s\n",
 			tim, quarters[last].timehi, d, slot,
@@ -402,7 +402,7 @@ static int read_log_file(void)
 		const int ready = select( log_fds+1, &rdset, NULL, NULL, &tv);
 
 		if ( ready < 0 )
-			error( EXIT_FAILURE, errno, "select() failed" );
+			err( EXIT_FAILURE, errno, "select() failed" );
 
 		if ( ready == 0 )
 		{
@@ -626,7 +626,7 @@ int main(int argc, char *argv[])
 			fprintf(stderr, "%s is not a directory.\n", dirname );
 			exit(2);
 		}
-		error( EXIT_FAILURE, errno, "failed to open directory." );
+		err( EXIT_FAILURE, errno, "failed to open directory." );
 	}
 	else
 	{
@@ -673,14 +673,14 @@ int main(int argc, char *argv[])
 
 	int fd;
 	if ( (fd = inotify_init()) < 0 )
-		error( EXIT_FAILURE, errno, "failed to initialize inotify instance" );
+		err( EXIT_FAILURE, errno, "failed to initialize inotify instance" );
 
 	int flags = fcntl( fd, F_GETFL, 0 );
 	fcntl( fd, F_SETFL, flags | O_NONBLOCK );
 
 	int wd;
 	if ( (wd = inotify_add_watch ( fd, dirname, IN_MODIFY | IN_CREATE | IN_DELETE ) ) < 0 )
-		error( EXIT_FAILURE, errno, "failed to add inotify watch for '%s'", dirname );
+		err( EXIT_FAILURE, errno, "failed to add inotify watch for '%s'", dirname );
 
 
 	int result = grapher_init();
@@ -709,7 +709,7 @@ int main(int argc, char *argv[])
 					sleep(6);
 			}
 			else if ( errno != EINTR )
-				error( EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event" );
+				err( EXIT_FAILURE, len == 0 ? 0 : errno, "failed to read inotify event" );
 		}
 		int i=0;
 		while (i < len)

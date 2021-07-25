@@ -102,6 +102,21 @@ If you have more than 8 recycled debug.log files, then you can tell the tool to 
 $ NUM_DEBUG_LOGS=15 ./chiaharvestgraph ~/.chia/mainnet/logs
 ```
 
+## Running from Docker
+
+First, build it
+
+```
+docker build -t chiaharvestgraph:latest .
+```
+
+Then run it
+
+```
+
+```bash
+docker run -v ~/.chia/mainnet/log:/.chia/mainnet/log:ro --name=chiaharvestgraph -it chiaharvestgraph:latest bash
+```
 
 ## Did you know that...
 
