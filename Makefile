@@ -1,7 +1,7 @@
 #SANI=-fsanitize=address -fno-omit-frame-pointer
 
 CC ?= cc
-CFLAGS +=  -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wno-missing-braces -g $(SANI)
+CFLAGS +=  -D_POSIX_C_SOURCE=200809L -std=c99 -Wall -Wno-missing-braces -g -O $(SANI)
 LDFLAGS += -lm $(SANI)
 
 TARGET = chiaharvestgraph

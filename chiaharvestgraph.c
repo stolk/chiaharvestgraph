@@ -53,6 +53,8 @@ static time_t newest_stamp=0;	// The stamp of the latest entry.
 
 static time_t refresh_stamp=0;	// When did we update the image, last?
 
+static int pool_proof_seen=0;	// Did we ever see a pool proof?
+
 static struct termios orig_termios;
 
 static const rgb_t* ramp=0;
@@ -170,6 +172,7 @@ static int mark_proof_as_a_pool_proof( time_t tim )
 	if ( i < 0 )
 		return -1;
 	quarters[s].poolpr[i] += 1;
+	pool_proof_seen = 1;
 	return 0;
 }
 
@@ -214,7 +217,7 @@ static void setup_postscript(void)
 	const char* l0 = "RED: NO-HARVEST ";
 	const char* l1 = "ORA: UNDER-HARVEST ";
 	const char* l2 = "YLW: NOMINAL ";
-	const char* l3 = has_access_to_farmer_log ? "BLU: PROOF " : "BLU: (POOL)PROOF ";
+	const char* l3 = "BLU: PROOF ";
 	const char* l4 = has_access_to_farmer_log ? "CYA: POOLPR " : "";
 
 	if ( ramp != cmap_heat )
@@ -480,12 +483,14 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 		if ( proofs )
 		{
 			// Eureka! We found a proof, and will probably get paid sweet XCH!
-			if ( /* proofs > poolpr*/ !poolpr )
+			if ( !pool_proof_seen )
 			{
+				// We didn't see pool proofs... this must be a solo proof. Show in dark blue.
 				red=0x40; grn=0x40; blu=0xff;
 			}
 			else
 			{
+				// We get pool proofs. This can't be a solo proof. Show in cyan.
 				red=0x20; grn=0xe0, blu=0xe0;
 			}
 		}
@@ -503,7 +508,7 @@ static void setup_scale(void)
 	int h = 0;
 	while( x >= imw )
 	{
-		char lab[8] = {0,0,0,0, 0,0,0,0};
+		char lab[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, };
 
 		if ( h<12 )
 			snprintf( overlay+x, sizeof(lab), "%2dh",  h+1);
