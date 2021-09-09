@@ -288,7 +288,7 @@ static void analyze_line(const char* line, ssize_t length)
 			const int num = sscanf
 			(
 				line,
-				"%04d-%02d-%02dT%02d:%02d:%f harvester %[^.].harvester.harvester: INFO "
+				"%04d-%02d-%02dT%02d:%02d:%f harvester %[^.].harvester.harveste%*[^:]: INFO "
 				"%d plots were eligible for farming %s Found %d proofs. Time: %f s. Total %d plots",
 				&year,
 				&month,
