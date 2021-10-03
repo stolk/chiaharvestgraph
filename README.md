@@ -23,12 +23,12 @@ $ make
 
 To use it:
 
-Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set.
+Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set. Alternatively, `cd ~/chia-blockchain` then `. ./activate` and run the command: `chia configure --log-level INFO`
 
 Then do:
 
 ```bash
-$ ./chiaharvestgraph ~/.chia/mainnet/log
+./chiaharvestgraph ~/.chia/mainnet/log
 ```
 
 Leave the tool running, as it keeps checking the log. More pixels will scroll in from the right, plotting top to bottom.
