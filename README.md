@@ -82,7 +82,7 @@ A white colour means that there was a bit more than expected harvesting, due to 
 
 Dark Grey means that the log did not go far enough back for that time period.
 
-A cyan colour means a proof was sent to your pool. This is just the method pools use to gauge how much space you are contributing.This is not the same as you finding a proof that results in winning XCH.
+A cyan colour means a proof was sent to your pool. This is just the method pools use to gauge how much space you are contributing. This is not the same as you finding a proof that results in winning XCH.
 
 And for the incredibly lucky... a blue pixel represents a found proof! Yeehaw!
 Better check your wallet!
