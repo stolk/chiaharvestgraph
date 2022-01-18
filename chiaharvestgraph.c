@@ -3,6 +3,10 @@
 // (c)2021 by Abraham Stolk.
 // XCH Donations: xch1zfgqfqfdse3e2x2z9lscm6dx9cvd5j2jjc7pdemxjqp0xp05xzps602592
 
+#ifdef __GLIBC__
+#  define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
