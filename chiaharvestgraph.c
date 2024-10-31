@@ -285,10 +285,11 @@ static void analyze_line(const char* line, ssize_t length)
 			float durat = -1.0f;
 			int plots = -1;
 			char key[128];
+			char versio[32];
 			const int num = sscanf
 			(
 				line,
-				"%04d-%02d-%02dT%02d:%02d:%f harvester %[^.].harvester.harvester: INFO "
+				"%04d-%02d-%02dT%02d:%02d:%f %s harvester %[^.].harvester.harvester: INFO "
 				"%d plots were eligible for farming %s Found %d proofs. Time: %f s. Total %d plots",
 				&year,
 				&month,
@@ -296,6 +297,7 @@ static void analyze_line(const char* line, ssize_t length)
 				&hours,
 				&minut,
 				&secon,
+				versio,
 				crypto,
 				&eligi,
 				key,
@@ -460,6 +462,8 @@ static void draw_column( int nr, uint32_t* img, int h, time_t now )
 				poolpr += quarters[q].poolpr[i];
 			}
 		}
+		(void)eligib;
+		(void)poolpr;
 		const time_t span = r1-r0;
 		const float nominalcheckspersecond = 9.375f;
 		const float nominalsecondspercheck = 1 / nominalcheckspersecond;
