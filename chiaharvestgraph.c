@@ -264,8 +264,8 @@ static void analyze_line(const char* line, ssize_t length)
 {
 	if ( length > 60 )
 	{
-		const int from_harvester = !strncmp( line+24, "harvester ", 10 );
-		const int from_farmer    = !strncmp( line+24, "farmer ", 7 );
+		const char* from_harvester = strstr( line, " harvester " );
+		const char* from_farmer    = strstr( line, " farmer " );
 		if ( from_farmer && !has_access_to_farmer_log )
 		{
 			has_access_to_farmer_log = 1;
@@ -305,7 +305,7 @@ static void analyze_line(const char* line, ssize_t length)
 				&durat,
 				&plots
 			);
-			if ( num == 12 )
+			if ( num == 13 )
 			{
 				struct tm tim =
 				{
