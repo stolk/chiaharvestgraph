@@ -23,11 +23,13 @@ $ make
 
 To use it:
 
-Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set.
+Set the loglevel for Chia to **INFO** by editting `~/.chia/mainnet/config/config.yaml` and make sure you have `log_level: INFO` set. Alternatively, `cd ~/chia-blockchain` then `. ./activate` and run the command: `chia configure --log-level INFO`
 
 Then do:
 
-**$ ./chiaharvestgraph ~/.chia/mainnet/log**
+```bash
+./chiaharvestgraph ~/.chia/mainnet/log
+```
 
 Leave the tool running, as it keeps checking the log. More pixels will scroll in from the right, plotting top to bottom.
 
@@ -74,11 +76,13 @@ A yellow colour means that the harvest frequency is nominal for that time span.
 
 An orange colour means that it was under harvested.
 
-A red colour means that there was no harvesting at those time slots.
+A red colour means that there was no harvesting at those time slots. This means something is wrong or your system is off.
 
 A white colour means that there was a bit more than expected harvesting, due to fluctuations.
 
 Dark Grey means that the log did not go far enough back for that time period.
+
+A cyan colour means a proof was sent to your pool. This is just the method pools use to gauge how much space you are contributing. This is not the same as you finding a proof that results in winning XCH.
 
 And for the incredibly lucky... a blue pixel represents a found proof! Yeehaw!
 Better check your wallet!
