@@ -271,43 +271,43 @@ static void analyze_line(const char* line, ssize_t length)
 			has_access_to_farmer_log = 1;
 			setup_postscript();
 		}
-                if ( from_harvester && strstr( line, "eligible" ) )
-                {
-                        int year=-1;
-                        int month=-1;
-                        int day=-1;
-                        int hours=-1;
-                        int minut=-1;
-                        float secon=-1;
-                        char crypto[128];
-                        char key[128];
-                        int eligi = -1;
-                        int proof = -1;
-                        int qual = -1;
-                        float durat = -1.0f;
-                        int plots = -1;
-                        char versio[32];
-                        const int num = sscanf
-                        (
-                                line,
-                                "%04d-%02d-%02dT%02d:%02d:%f %s harvester %[^.].harvester.harvester: INFO     challenge_hash: %s ..."
-                                "%d plots were eligible for farming challengeFound %d V1 proofs and %d V2 qualities. Time: %f s. Total %d plots",
-                                &year,
-                                &month,
-                                &day,
-                                &hours,
-                                &minut,
-                                &secon,
-                                versio,
-                                crypto,
-                                key,
-                                &eligi,
-                                &proof,
-                                &qual,
-                                &durat,
-                                &plots
-                        );
-                        if ( num == 14 )
+		if ( from_harvester && strstr( line, "eligible" ) )
+		{
+			int year=-1;
+			int month=-1;
+			int day=-1;
+			int hours=-1;
+			int minut=-1;
+			float secon=-1;
+			char crypto[128];
+			char key[128];
+			int eligi = -1;
+			int proof = -1;
+			int qual = -1;
+			float durat = -1.0f;
+			int plots = -1;
+			char versio[32];
+			const int num = sscanf
+			(
+				line,
+				"%04d-%02d-%02dT%02d:%02d:%f %s harvester %[^.].harvester.harvester: INFO     challenge_hash: %s ..."
+				"%d plots were eligible for farming challengeFound %d V1 proofs and %d V2 qualities. Time: %f s. Total %d plots",
+				&year,
+				&month,
+				&day,
+				&hours,
+				&minut,
+				&secon,
+				versio,
+				crypto,
+				key,
+				&eligi,
+				&proof,
+				&qual,
+				&durat,
+				&plots
+			);
+			if ( num == 14 )
 			{
 				struct tm tim =
 				{
