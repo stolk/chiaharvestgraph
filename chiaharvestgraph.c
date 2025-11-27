@@ -257,7 +257,8 @@ static void setup_postscript(void)
 
 
 // Parses log entries that look like this:
-// 2021-05-13T09:14:35.538 harvester chia.harvester.harvester: INFO     0 plots were eligible for farming c1c8456f7a... Found 0 proofs. Time: 0.00201 s. Total 36 plots
+// 2025-11-26T22:26:23.974 2.5.7 harvester chia.harvester.harvester: INFO     challenge_hash: 1d87c10291 ...2 plots were eligible for farming challengeFound 0 V1 proofs and 0 V2 qualities. Time: 0.07465 s. Total 252 plots
+
 // NOTE: If followed by a line that looks like: "Submitting partial for" then it was a pooled proof.
 
 static void analyze_line(const char* line, ssize_t length)
